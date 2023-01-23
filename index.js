@@ -17,16 +17,18 @@ router.post('/file', upload.single('file'), (req, res) => {
         phone: req.body.phone,
         file: req.file.originalname,
     };
+
     jsonfile.readFile('data.json', (err, obj) => {
         if (err) console.error(err);
         else {
-            const updatedData = { ...obj, ...data };
-            jsonfile.writeFileSync('data.json', updatedData);
+            if (!obj.data) obj.data = [];
+            obj.data.push(data);
+            jsonfile.writeFile('data.json', obj);
             res.send('Data saved to file');
         }
     });
-    console.log(req.body);
 });
+
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
 });
